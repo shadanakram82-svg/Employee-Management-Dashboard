@@ -1,0 +1,67 @@
+[
+  {
+    "id": "EMP-001",
+    "name": "Aarav Sharma",
+    "email": "aarav.s@company.in",
+    "phone": "+91-9876543210",
+    "department": "Engineering",
+    "designation": "Senior Developer",
+    "salary": 1200000,
+    "joiningDate": "2023-01-15",
+    "address": "123 Tech Park, Bengaluru",
+    "gender": "Male",
+    "status": "Active"
+  },
+  {
+    "id": "EMP-002",
+    "name": "Priya Patel",
+    "email": "priya.p@company.in",
+    "phone": "+91-9876543211",
+    "department": "Human Resources",
+    "designation": "HR Manager",
+    "salary": 850000,
+    "joiningDate": "2022-11-01",
+    "address": "456 Corporate Towers, Mumbai",
+    "gender": "Female",
+    "status": "Active"
+  },
+  {
+    "id": "EMP-003",
+    "name": "Rohan Gupta",
+    "email": "rohan.g@company.in",
+    "phone": "+91-9876543212",
+    "department": "Design",
+    "designation": "UX Designer",
+    "salary": 950000,
+    "joiningDate": "2024-03-10",
+    "address": "789 Creative Hub, Pune",
+    "gender": "Male",
+    "status": "On Leave"
+  },
+  {
+    "id": "EMP-004",
+    "name": "Ananya Singh",
+    "email": "ananya.s@company.in",
+    "phone": "+91-9876543213",
+    "department": "Marketing",
+    "designation": "Marketing Specialist",
+    "salary": 750000,
+    "joiningDate": "2023-07-20",
+    "address": "101 Market Square, Delhi",
+    "gender": "Female",
+    "status": "Active"
+  },
+  {
+    "id": "EMP-005",
+    "name": "Vikram Desai",
+    "email": "vikram.d@company.in",
+    "phone": "+91-9876543214",
+    "department": "Finance",
+    "designation": "Financial Analyst",
+    "salary": 1100000,
+    "joiningDate": "2021-05-12",
+    "address": "202 Finance Block, Hyderabad",
+    "gender": "Male",
+    "status": "Resigned"
+  }
+]

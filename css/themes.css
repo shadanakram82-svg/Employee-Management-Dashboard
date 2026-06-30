@@ -1,0 +1,54 @@
+:root {
+  /* Default Light Theme */
+  --bg-primary: #f3f4f6;
+  --bg-secondary: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  
+  --accent-color: #3b82f6; /* Blue default */
+  --accent-hover: #2563eb;
+  
+  /* Status Colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #0ea5e9;
+  
+  /* Glassmorphism Variables */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  --glass-blur: blur(16px);
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 80px;
+  --header-height: 70px;
+  --border-radius-sm: 10px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 24px;
+  --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  
+  --accent-color: #6366f1; /* Indigo default in dark */
+  --accent-hover: #4f46e5;
+
+  /* Glassmorphism Variables Dark */
+  --glass-bg: rgba(30, 41, 59, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Custom Accent Colors override */
+[data-accent="purple"] { --accent-color: #8b5cf6; --accent-hover: #7c3aed; }
+[data-accent="green"] { --accent-color: #10b981; --accent-hover: #059669; }
+[data-accent="rose"] { --accent-color: #f43f5e; --accent-hover: #e11d48; }
+[data-accent="orange"] { --accent-color: #f97316; --accent-hover: #ea580c; }

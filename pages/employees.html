@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employees - HR Portal</title>
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    /* Employee Table Styles */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+    
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    
+    .table th, .table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .table th {
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: rgba(0, 0, 0, 0.02);
+      cursor: pointer;
+      position: relative;
+    }
+    
+    [data-theme="dark"] .table th {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table th:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .table tbody tr {
+      transition: background var(--transition-speed);
+    }
+    
+    .table tbody tr:hover {
+      background: rgba(59, 130, 246, 0.05);
+    }
+    
+    .employee-cell {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .employee-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--accent-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .modal {
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius-md);
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s ease;
+      box-shadow: var(--glass-shadow);
+      border: 1px solid var(--glass-border);
+    }
+    
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-filter {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    /* Action Buttons */
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      transition: color 0.2s;
+      padding: 0.25rem;
+    }
+    .action-btn:hover { color: var(--accent-color); }
+    .action-btn.delete:hover { color: var(--danger); }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--glass-border);
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .page-btn:hover:not(:disabled) {
+      background: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+    
+    .page-btn.active {
+      background: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+    
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .sort-icon {
+      font-size: 0.75rem;
+      margin-left: 0.25rem;
+      opacity: 0.5;
+    }
+    th.sort-asc .sort-icon, th.sort-desc .sort-icon { opacity: 1; color: var(--accent-color); }
+  </style>
+</head>
+<body>
+  
+  <div class="app-container dashboard-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar glass-panel" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">HR Portal</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="employees.html" class="nav-item active">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Employees</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Reports</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer" style="padding: 1rem;">
+        <div class="user-profile-card">
+          <div class="avatar" id="user-avatar">A</div>
+          <div class="user-info">
+            <span class="user-name" id="user-name">Admin</span>
+            <span class="user-role">HR Manager</span>
+          </div>
+          <button class="logout-icon-btn" id="logout-btn" title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Topbar -->
+      <header class="topbar glass-panel">
+        <div class="topbar-left">
+          <button class="btn-icon" id="sidebar-toggle">☰</button>
+          <h2>Employee Directory</h2>
+        </div>
+        
+        <div class="topbar-right">
+          <button class="btn-icon" id="theme-toggle">🌓</button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="content-area">
+        
+        <div class="glass-panel animate-fade-in" style="padding: 1.5rem;">
+          
+          <div class="controls-bar">
+            <div class="search-filter">
+              <input type="text" id="search-input" class="form-control" placeholder="Search employees..." style="width: 250px;">
+              <select id="filter-dept" class="form-control" style="width: 150px;">
+                <option value="">All Departments</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Human Resources">HR</option>
+                <option value="Design">Design</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Finance">Finance</option>
+              </select>
+              <select id="filter-designation" class="form-control" style="width: 150px;">
+                <option value="">All Designations</option>
+              </select>
+              <select id="filter-status" class="form-control" style="width: 150px;">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Resigned">Resigned</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-outline" onclick="CSVExport.exportEmployees()">Download Data</button>
+              <button class="btn btn-primary" id="add-employee-btn">
+                + Add Employee
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="table" id="employee-table">
+              <thead>
+                <tr>
+                  <th data-sort="name">Name <span class="sort-icon">⇅</span></th>
+                  <th data-sort="id">Employee ID <span class="sort-icon">⇅</span></th>
+                  <th data-sort="department">Department <span class="sort-icon">⇅</span></th>
+                  <th data-sort="designation">Designation <span class="sort-icon">⇅</span></th>
+                  <th data-sort="salary">Salary <span class="sort-icon">⇅</span></th>
+                  <th data-sort="status">Status <span class="sort-icon">⇅</span></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="employee-tbody">
+                <!-- Data populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination" id="pagination">
+            <!-- Pagination populated by JS -->
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Employee Modal -->
+  <div class="modal-overlay" id="employee-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Add New Employee</h3>
+        <button class="btn-icon" id="close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="employee-form">
+          <input type="hidden" id="emp-index">
+          <div class="form-grid">
+            <div class="form-group" id="group-id">
+              <label class="form-label">Employee ID</label>
+              <input type="text" id="emp-id" class="form-control" placeholder="EMP-000" required>
+            </div>
+            <div class="form-group" id="group-name">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="emp-name" class="form-control" required>
+            </div>
+            <div class="form-group" id="group-email">
+              <label class="form-label">Email</label>
+              <input type="email" id="emp-email" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="text" id="emp-phone" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select id="emp-dept" class="form-control" required>
+                <option value="Engineering">Engineering</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Design">Design</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Finance">Finance</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Designation</label>
+              <select id="emp-desig" class="form-control" required>
+                <!-- Populated dynamically based on department -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Salary</label>
+              <input type="number" id="emp-salary" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Joining Date</label>
+              <input type="date" id="emp-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select id="emp-gender" class="form-control">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select id="emp-status" class="form-control">
+                <option value="Active">Active</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Resigned">Resigned</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <textarea id="emp-address" class="form-control" rows="2"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="cancel-modal">Cancel</button>
+        <button type="submit" form="employee-form" class="btn btn-primary" id="save-employee">Save Employee</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/csv.js"></script>
+  <script src="../js/validation.js"></script>
+  <script src="../js/search.js"></script>
+  <script src="../js/filter.js"></script>
+  <script src="../js/employee.js"></script>
+</body>
+</html>

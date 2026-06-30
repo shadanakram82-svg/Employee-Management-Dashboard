@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - HR Portal</title>
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  
+  <div class="app-container dashboard-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar glass-panel" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">HR Portal</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="employees.html" class="nav-item">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Employees</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Reports</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer" style="padding: 1rem;">
+        <div class="user-profile-card">
+          <div class="avatar" id="user-avatar">A</div>
+          <div class="user-info">
+            <span class="user-name" id="user-name">Admin</span>
+            <span class="user-role">HR Manager</span>
+          </div>
+          <button class="logout-icon-btn" id="logout-btn" title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Topbar -->
+      <header class="topbar glass-panel">
+        <div class="topbar-left">
+          <button class="btn-icon" id="sidebar-toggle">☰</button>
+          <h2>Dashboard Overview</h2>
+        </div>
+        
+        <div class="topbar-right">
+          <button class="btn-icon" id="theme-toggle">🌓</button>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="content-area">
+        
+        <div class="quick-actions">
+          <button class="btn btn-primary" onclick="window.location.href='employees.html'">+ Add New Employee</button>
+          <button class="btn btn-outline" onclick="window.location.href='reports.html'">View Reports</button>
+          <button class="btn btn-outline" onclick="CSVExport.exportEmployees()">Download Data</button>
+        </div>
+
+        <div class="stats-grid animate-fade-in drop-zone" id="dashboard-stats">
+          <!-- Stats populated by JS -->
+          <div class="stat-card glass-panel" id="stat-total-card" draggable="true">
+            <div class="stat-icon primary">👥</div>
+            <div class="stat-info">
+              <h3>Total Employees</h3>
+              <p id="stat-total">0</p>
+            </div>
+          </div>
+          <div class="stat-card glass-panel" id="stat-active-card" draggable="true">
+            <div class="stat-icon success">🟢</div>
+            <div class="stat-info">
+              <h3>Active Employees</h3>
+              <p id="stat-active">0</p>
+            </div>
+          </div>
+          <div class="stat-card glass-panel" id="stat-depts-card" draggable="true">
+            <div class="stat-icon warning">🏢</div>
+            <div class="stat-info">
+              <h3>Departments</h3>
+              <p id="stat-depts">0</p>
+            </div>
+          </div>
+          <div class="stat-card glass-panel" id="stat-salary-card" draggable="true">
+            <div class="stat-icon info">💰</div>
+            <div class="stat-info">
+              <h3>Avg Salary</h3>
+              <p id="stat-salary">₹0</p>
+            </div>
+          </div>
+          <div class="stat-card glass-panel" id="stat-new-card" draggable="true">
+            <div class="stat-icon primary">✨</div>
+            <div class="stat-info">
+              <h3>New Employees</h3>
+              <p id="stat-new">0</p>
+            </div>
+          </div>
+          <div class="stat-card glass-panel" id="stat-high-card" draggable="true">
+            <div class="stat-icon success">📈</div>
+            <div class="stat-info">
+              <h3>Highest Salary</h3>
+              <p id="stat-high">₹0</p>
+            </div>
+          </div>
+          <div class="stat-card glass-panel" id="stat-low-card" draggable="true">
+            <div class="stat-icon danger">📉</div>
+            <div class="stat-info">
+              <h3>Lowest Salary</h3>
+              <p id="stat-low">₹0</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid animate-fade-in drop-zone" id="dashboard-charts">
+          <div class="chart-card glass-panel" id="chart-dept-card" draggable="true">
+            <div class="chart-header">
+              <h3>Department Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="deptChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card glass-panel" id="chart-salary-card" draggable="true">
+            <div class="chart-header">
+              <h3>Salary Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="salaryChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card glass-panel" id="chart-hiring-card" draggable="true">
+            <div class="chart-header">
+              <h3>Monthly Hiring</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="hiringChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card glass-panel" id="chart-status-card" draggable="true">
+            <div class="chart-header">
+              <h3>Employee Status</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="empStatusChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="recent-activity glass-panel animate-fade-in">
+          <h3>Recent Activity</h3>
+          <ul class="activity-list" id="recent-activity-list">
+            <!-- Populated by JS ideally, leaving mock data for fallback -->
+            <li class="activity-item">
+              <span class="activity-time">10:45 AM</span>
+              <div class="activity-content">
+                <p><strong>Alex Johnson</strong> joined Engineering department.</p>
+              </div>
+            </li>
+            <li class="activity-item">
+              <span class="activity-time">Yesterday</span>
+              <div class="activity-content">
+                <p>Salary updated for <strong>Sarah Williams</strong>.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/csv.js"></script>
+  <script src="../js/chart.js"></script>
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>
